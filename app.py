@@ -1,23 +1,23 @@
 import streamlit as st
 import torch
-from transformers import AlbertTokenizer, AlbertForSequenceClassification, AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AlbertTokenizer, AlbertForSequenceClassification, AlbertConfig
 import plotly.graph_objects as go
 
 # URL of the logo
 logo_url = "https://dejan.ai/wp-content/uploads/2024/02/dejan-300x103.png"
 
-# Display the logo at the top using st.image
-st.image(logo_url, use_column_width=True)
+# Display the logo at the top using st.logo
+st.logo(logo_url, link="https://dejan.ai")
 
 # Streamlit app title and description
-st.title("DEJAN AI Search Query Classifier")
+st.title("Search Query Form Classifier")
+st.write("Ambiguous search queries are candidates for query expansion. Our model identifies such queries with an 80 percent accuracy and is deployed in a batch processing pipeline directly connected with Google Search Console API. In this demo you can test the model capability by testing individual queries.")
 st.write("Enter a query to check if it's well-formed:")
-st.write("See [Dejan AI](https://dejan.ai/blog/search-query-quality-classifier/)")
 
-# Load the model and tokenizer from Hugging Face Hub
+# Load the model and tokenizer from the Hugging Face Model Hub
 model_name = 'dejanseo/Query-Quality-Classifier'
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+tokenizer = AlbertTokenizer.from_pretrained(model_name)
+model = AlbertForSequenceClassification.from_pretrained(model_name)
 
 # Set the model to evaluation mode
 model.eval()
@@ -25,7 +25,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 
 # User input
-user_input = st.text_input("Query:")
+user_input = st.text_input("Query:", "What is?")
+st.write("Developed by [Dejan AI](https://dejan.ai/blog/search-query-quality-classifier/)")
 
 def classify_query(query):
     # Tokenize input
